@@ -5,16 +5,14 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Shaurya — Student Developer & Maker</title>
   <meta name="description" content="Shaurya — portfolio showcasing Budget Buddy, Crypto Basics, robotics demos and workshops." />
-
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
-
   <style>
     :root{
       --accent: #0f766e;
       --accent-2: #f97316;
     }
-    html, body { font-family: Inter, ui-sans-serif, system-ui; }
+    html, body { font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; }
     body { transition: background-color .25s ease, color .25s ease; }
     .bg-gradient-anim {
       background: linear-gradient(120deg, rgba(15,118,110,0.12), rgba(249,115,22,0.08), rgba(99,102,241,0.06));
@@ -22,141 +20,283 @@
       animation: gradientShift 14s ease infinite;
     }
     @keyframes gradientShift { 0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%} }
-   .glass {
-  backdrop-filter: blur(18px) saturate(180%);
-  background: rgba(255,255,255,0.18);
-  border: 1px solid rgba(255,255,255,0.12);
-}
-html.dark .glass {
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.08);
-}
 
-    html.dark .glass {
-      background: rgba(10,18,30,0.45);
-      border: 1px solid rgba(255,255,255,0.05);
+    /* <-- NEW GLASS STYLE (more transparent / frosted) --> */
+    .glass {
+      backdrop-filter: blur(18px) saturate(180%);
+      background: rgba(255,255,255,0.16);
+      border: 1px solid rgba(255,255,255,0.10);
+      box-shadow: 0 8px 28px rgba(0,0,0,0.05);
+      transition: background .18s ease, box-shadow .18s ease, transform .12s ease;
     }
+    html.dark .glass {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.06);
+      box-shadow: 0 8px 28px rgba(0,0,0,0.35);
+    }
+    /* --------------------------------------------------------------- */
+
     .accent-line { height: 4px; width: 84px; border-radius: 6px; background: linear-gradient(90deg,var(--accent),var(--accent-2)); }
+    .card-anim { transition: transform .28s cubic-bezier(.2,.9,.3,1), box-shadow .28s; }
+    .card-anim:hover { transform: translateY(-10px) rotate(-0.2deg); box-shadow: 0 28px 60px rgba(2,6,23,0.12); }
     .appear { opacity: 0; transform: translateY(6px); animation: appear .6s ease forwards; }
+    .appear.delay-1 { animation-delay: .06s; } .appear.delay-2 { animation-delay: .12s; } .appear.delay-3 { animation-delay: .18s; }
     @keyframes appear { to { opacity: 1; transform: none; } }
+    .focus-ring:focus { outline: 3px solid rgba(15,118,110,0.12); outline-offset: 3px; }
+    body { background-color: #f8fafc; color: #0f172a; }
+    html.dark body { background-color: #071026; color: #e6eef8; }
+    main { min-height: 60vh; }
   </style>
 </head>
 
 <body class="bg-gradient-anim">
   <div class="min-h-screen">
-
-    <!-- HEADER — same as before -->
     <header class="sticky top-4 z-40 max-w-6xl mx-auto px-6">
-      <nav class="flex items-center justify-between">
-        <a href="#hero" class="flex items-center gap-3 p-2">
-          <div class="w-11 h-11 rounded-2xl flex items-center justify-center text-white font-bold"
-            style="background:linear-gradient(135deg,var(--accent),var(--accent-2))">S</div>
+      <nav class="flex items-center justify-between bg-transparent">
+        <a href="#hero" class="flex items-center gap-3 rounded-lg p-2 transition-all focus-ring" aria-label="Go to top">
+          <div class="w-11 h-11 rounded-2xl flex items-center justify-center text-white font-bold" style="background: linear-gradient(135deg,var(--accent),var(--accent-2))">S</div>
           <div class="text-sm font-semibold">Shaurya</div>
         </a>
 
         <div class="hidden md:flex items-center gap-4 text-sm">
-          <a href="#projects" class="hover:underline">Projects</a>
-          <a href="#timeline" class="hover:underline">Timeline</a>
-          <a href="#about" class="hover:underline">About</a>
-          <a href="#contact" class="hover:underline">Contact</a>
+          <a class="py-2 px-3 rounded-md hover:bg-white/40 dark:hover:bg-white/10 focus-ring" href="#projects">Projects</a>
+          <a class="py-2 px-3 rounded-md hover:bg-white/40 dark:hover:bg-white/10 focus-ring" href="#timeline">Timeline</a>
+          <a class="py-2 px-3 rounded-md hover:bg-white/40 dark:hover:bg-white/10 focus-ring" href="#about">About</a>
+          <a class="py-2 px-3 rounded-md hover:bg-white/40 dark:hover:bg-white/10 focus-ring" href="#contact">Contact</a>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <button id="theme-toggle" aria-label="Toggle dark mode" class="p-2 rounded-md focus-ring glass" title="Toggle theme"></button>
+
+          <div class="md:hidden">
+            <button id="menu-toggle" aria-expanded="false" aria-controls="mobile-nav" class="p-2 rounded-md focus-ring glass">
+              <svg id="menu-open" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
+              </svg>
+              <svg id="menu-close" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+              </svg>
+            </button>
+          </div>
         </div>
       </nav>
+
+      <div id="mobile-nav" class="hidden mt-3 glass border rounded-lg p-3 shadow-sm">
+        <div class="flex flex-col gap-2">
+          <a class="py-2 px-3 rounded-md hover:bg-gray-100 dark:hover:bg-white/3 focus-ring" href="#projects">Projects</a>
+          <a class="py-2 px-3 rounded-md hover:bg-gray-100 dark:hover:bg-white/3 focus-ring" href="#timeline">Timeline</a>
+          <a class="py-2 px-3 rounded-md hover:bg-gray-100 dark:hover:bg-white/3 focus-ring" href="#about">About</a>
+          <a class="py-2 px-3 rounded-md hover:bg-gray-100 dark:hover:bg-white/3 focus-ring" href="#contact">Contact</a>
+        </div>
+      </div>
     </header>
 
     <main class="max-w-6xl mx-auto px-6 py-12">
-
-      <!-- HERO unchanged -->
       <section id="hero" class="grid gap-8 md:grid-cols-2 items-center">
-        <div class="appear">
-          <h1 class="text-4xl md:text-5xl font-extrabold">Shaurya</h1>
-          <p class="mt-3 text-lg text-slate-600">Student developer building learning-first web apps, robotics demos and hands-on tutorials.</p>
+        <div class="appear delay-1">
+          <h1 class="text-3xl md:text-5xl font-extrabold leading-tight">Shaurya</h1>
+          <div class="mt-3 text-lg font-medium text-slate-700 dark:text-slate-300">Student developer building learning-first web apps, robotics demos and hands-on tutorials.</div>
 
-          <p class="mt-5 text-slate-600">I design reproducible demos and easy-to-understand resources that help students learn fast.</p>
+          <p class="mt-6 text-slate-600 dark:text-slate-300">I design reproducible demos and concise tutorials so students can learn by doing. My work emphasises clarity, immediate usefulness, and friendly UX.</p>
 
           <div class="mt-6 flex gap-3">
-            <a href="#projects" class="px-5 py-3 rounded-lg font-semibold text-white" style="background:linear-gradient(90deg,var(--accent),var(--accent-2))">Explore Projects</a>
-            <a href="#contact" class="px-5 py-3 rounded-lg border font-medium">Contact</a>
+            <a href="#projects" class="inline-flex items-center gap-2 px-5 py-3 rounded-lg font-semibold focus-ring" style="background:linear-gradient(90deg,var(--accent),var(--accent-2)); color:white">Explore projects</a>
+            <a href="#about" class="inline-flex items-center gap-2 px-5 py-3 rounded-lg border font-medium focus-ring glass">About me</a>
           </div>
 
-          <div class="mt-6 text-sm text-slate-500">Gujarat, India • Open for events & collaborations</div>
+          <div class="mt-6 text-sm text-slate-500 dark:text-slate-400">Gujarat, India • Available for student events & collaborations</div>
+        </div>
+
+        <div class="order-first md:order-last appear delay-2">
+          <div class="glass p-6 rounded-2xl">
+            <div class="flex items-start justify-between gap-3">
+              <div>
+                <div class="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">Highlights</div>
+                <div class="mt-2 text-lg font-semibold">Student-first projects & demos</div>
+                <div class="mt-3 text-sm text-slate-600 dark:text-slate-300">Short, practical demos and notes designed to be reproduced quickly.</div>
+              </div>
+
+              <div class="text-right">
+                <div class="text-xs text-slate-500 dark:text-slate-400">Active since</div>
+                <div class="font-bold text-lg">2023</div>
+              </div>
+            </div>
+
+            <div class="mt-5 grid grid-cols-2 gap-3">
+              <div class="rounded-lg p-3 shadow-sm bg-white/60 dark:bg-[#06203a]/50">
+                <div class="text-xs text-slate-500">Budget Buddy</div>
+                <div class="font-medium text-sm">Budgeting tool & student finance companion</div>
+              </div>
+              <div class="rounded-lg p-3 shadow-sm bg-white/60 dark:bg-[#06203a]/50">
+                <div class="text-xs text-slate-500">Crypto Basics</div>
+                <div class="font-medium text-sm">Beginner crypto explainers</div>
+              </div>
+            </div>
+
+            <div class="mt-4 text-xs text-slate-500 dark:text-slate-400">Also: robotics demos, embedded prototypes and workshops.</div>
+          </div>
         </div>
       </section>
 
-      <!-- PROJECTS -->
-      <section id="projects" class="mt-16">
-        <h2 class="text-2xl font-semibold">Projects</h2>
+      <section id="projects" class="mt-12">
+        <div class="flex items-center justify-between">
+          <h2 class="text-xl font-semibold">Projects</h2>
+          <div class="text-sm text-slate-500 dark:text-slate-400">Selected student-focused work</div>
+        </div>
 
-        <div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-
-          <!-- Budget Buddy -->
-          <article class="glass p-6 rounded-2xl">
-            <h3 class="text-lg font-semibold">Budget Buddy</h3>
-            <p class="mt-2 text-sm text-slate-600">A simple student budgeting companion with trackers and finance explainers.</p>
-            <a href="https://budgetxbuddy.lovable.app/" target="_blank" class="mt-4 inline-block text-sm font-medium underline">Open site</a>
+        <div class="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <article class="card-anim appear delay-1 glass rounded-2xl p-5">
+            <div class="flex items-start gap-4">
+              <div class="w-11 h-11 rounded-lg bg-gradient-to-tr from-[color:var(--accent)] to-[color:var(--accent-2)] flex items-center justify-center text-white font-bold">B</div>
+              <div class="flex-1">
+                <h3 class="font-semibold text-lg">Budget Buddy — Student Budgeting</h3>
+                <p class="mt-2 text-sm text-slate-600 dark:text-slate-300">A student-focused budgeting companion: simple trackers, basic savings goals, and explainers that make money sensible for learners.</p>
+              </div>
+            </div>
+            <div class="mt-4 flex items-center justify-between">
+              <a href="https://budgetxbuddy.lovable.app/" target="_blank" rel="noopener" class="text-sm font-medium focus-ring">Open site</a>
+              <span class="text-xs text-slate-500 dark:text-slate-400">Web • Finance</span>
+            </div>
           </article>
 
-          <!-- Crypto Basics -->
-          <article class="glass p-6 rounded-2xl">
-            <h3 class="text-lg font-semibold">Crypto Basics</h3>
-            <p class="mt-2 text-sm text-slate-600">Beginner-friendly walkthroughs of blockchain fundamentals, wallets and safety tips.</p>
-            <a href="https://cryptobasics.lovable.app/" target="_blank" class="mt-4 inline-block text-sm font-medium underline">Open site</a>
+          <article class="card-anim appear delay-2 glass rounded-2xl p-5">
+            <div class="flex items-start gap-4">
+              <div class="w-11 h-11 rounded-lg bg-gradient-to-tr from-[color:var(--accent)] to-[color:var(--accent-2)] flex items-center justify-center text-white font-bold">C</div>
+              <div class="flex-1">
+                <h3 class="font-semibold text-lg">Crypto Basics</h3>
+                <p class="mt-2 text-sm text-slate-600 dark:text-slate-300">Beginner-friendly walkthroughs of blockchain fundamentals, wallets and safety tips.</p>
+              </div>
+            </div>
+            <div class="mt-4 flex items-center justify-between">
+              <a href="https://cryptobasics.lovable.app/" target="_blank" rel="noopener" class="text-sm font-medium focus-ring">Open site</a>
+              <span class="text-xs text-slate-500 dark:text-slate-400">Web • Explainer</span>
+            </div>
           </article>
 
-          <!-- Robotics -->
-          <article class="glass p-6 rounded-2xl">
-            <h3 class="text-lg font-semibold">Robotics & Embedded Demos</h3>
-            <p class="mt-2 text-sm text-slate-600">Hands-on Arduino projects used in workshops and competitions.</p>
+          <article class="card-anim appear delay-3 glass rounded-2xl p-5">
+            <div class="flex items-start gap-4">
+              <div class="w-11 h-11 rounded-lg bg-gradient-to-tr from-[color:var(--accent)] to-[color:var(--accent-2)] flex items-center justify-center text-white font-bold">R</div>
+              <div class="flex-1">
+                <h3 class="font-semibold text-lg">Robotics & Embedded Demos</h3>
+                <p class="mt-2 text-sm text-slate-600 dark:text-slate-300">Hands-on Arduino & sensor prototypes used in competitions and workshops.</p>
+              </div>
+            </div>
+            <div class="mt-4 text-xs text-slate-500 dark:text-slate-400">Hardware • Workshops</div>
           </article>
-
         </div>
       </section>
 
-      <!-- TIMELINE -->
-      <section id="timeline" class="mt-16">
-        <h2 class="text-2xl font-semibold">Timeline</h2>
-        <ul class="mt-6 space-y-4">
-          <li class="glass p-4 rounded-xl">Robofest — Participant</li>
-          <li class="glass p-4 rounded-xl">TechTop — Kochi</li>
-          <li class="glass p-4 rounded-xl">Malaysia — Project Showcase</li>
-        </ul>
+      <section id="timeline" class="mt-12">
+        <h2 class="text-xl font-semibold">Timeline & Highlights</h2>
+        <ol class="mt-6 space-y-4">
+          <li class="glass p-4 rounded-xl">
+            <div class="text-sm font-medium">Robofest — Participant</div>
+            <div class="text-xs text-slate-500 dark:text-slate-400 mt-1">Robotics competitions and demos.</div>
+          </li>
+          <li class="glass p-4 rounded-xl">
+            <div class="text-sm font-medium">TechTop — Kochi</div>
+            <div class="text-xs text-slate-500 dark:text-slate-400 mt-1">Local workshops and demonstrations.</div>
+          </li>
+          <li class="glass p-4 rounded-xl">
+            <div class="text-sm font-medium">Malaysia — Project showcase</div>
+            <div class="text-xs text-slate-500 dark:text-slate-400 mt-1">International student showcase.</div>
+          </li>
+        </ol>
       </section>
 
-      <!-- ABOUT -->
-      <section id="about" class="mt-16 glass p-6 rounded-2xl">
-        <h2 class="text-xl font-semibold">About Shaurya</h2>
-        <div class="accent-line mt-3"></div>
+      <section id="about" class="mt-12">
+        <div class="glass p-6 rounded-2xl">
+          <div class="flex items-start gap-6">
+            <div class="flex-1">
+              <h2 class="text-xl font-semibold">About Shaurya</h2>
+              <div class="accent-line mt-3"></div>
 
-        <p class="mt-4 text-slate-700">I build short, reproducible demos and simple learning tools that make concepts easy for students. I focus on clarity, clean UI and beginner-friendly documentation.</p>
+              <p class="mt-4 text-slate-700 dark:text-slate-300">I build concise, reproducible demos and short tutorials that help students learn by doing. I prioritize clarity: short explanations, minimal friction and ready-to-run code.</p>
 
-        <p class="mt-3 text-slate-700">Interests: EdTech, UI/UX, Embedded Systems, Robotics, Financial Literacy.</p>
+              <p class="mt-3 text-slate-700 dark:text-slate-300">Interests: EdTech, UI/UX, embedded systems, robotics and finance education. I also mentor small student groups at workshops.</p>
+            </div>
+
+            <aside class="w-56">
+              <div class="bg-white/60 dark:bg-[#06203a]/50 p-4 rounded-lg">
+                <div class="text-sm text-slate-500 dark:text-slate-400">Skills</div>
+                <ul class="mt-3 text-sm space-y-1 text-slate-700 dark:text-slate-200">
+                  <li>HTML, CSS, JavaScript</li>
+                  <li>UI/UX Prototyping</li>
+                  <li>Arduino / Embedded C</li>
+                  <li>Python basics</li>
+                  <li>Workshop mentoring</li>
+                </ul>
+              </div>
+            </aside>
+          </div>
+        </div>
       </section>
 
-      <!-- CONTACT -->
-      <section id="contact" class="mt-16">
+      <section id="contact" class="mt-12">
         <h2 class="text-2xl font-semibold">Contact</h2>
-
         <div class="mt-6 glass p-6 rounded-2xl space-y-4">
-
           <div class="flex items-center gap-3">
             <span class="px-3 py-2 bg-[var(--accent)] text-white rounded-lg text-xs font-bold">Email</span>
-            <a href="mailto:shauryaxgajjar@gmail.com" class="font-medium text-slate-800">
-              shauryaxgajjar@gmail.com
-            </a>
+            <a href="mailto:shauryaxgajjar@gmail.com" class="font-medium text-slate-800 dark:text-slate-200">shauryaxgajjar@gmail.com</a>
           </div>
 
           <div class="flex items-center gap-3">
             <span class="px-3 py-2 bg-[var(--accent-2)] text-white rounded-lg text-xs font-bold">Phone</span>
-            <a href="tel:+916354332119" class="font-medium text-slate-800">
-              +91 63543 32119
-            </a>
+            <a href="tel:+916354332119" class="font-medium text-slate-800 dark:text-slate-200">+91 63543 32119</a>
           </div>
 
-          <p class="text-sm text-slate-500">Available for collaborations, events and student workshops.</p>
+          <p class="text-sm text-slate-500 dark:text-slate-400">Available for collaborations, events & student workshops.</p>
         </div>
       </section>
 
-      <footer class="mt-12 text-center text-xs text-slate-500 pb-12">© Shaurya — Portfolio</footer>
+      <footer class="mt-12 text-center text-xs text-slate-400 dark:text-slate-500 pb-12">© Shaurya — Portfolio</footer>
     </main>
   </div>
+
+  <script>
+    // Mobile menu toggle
+    const menuToggle = document.getElementById('menu-toggle');
+    const mobileNav = document.getElementById('mobile-nav');
+    const menuOpen = document.getElementById('menu-open');
+    const menuClose = document.getElementById('menu-close');
+
+    menuToggle?.addEventListener('click', () => {
+      const expanded = menuToggle.getAttribute('aria-expanded') === 'true';
+      menuToggle.setAttribute('aria-expanded', String(!expanded));
+      mobileNav.classList.toggle('hidden');
+      menuOpen.classList.toggle('hidden');
+      menuClose.classList.toggle('hidden');
+    });
+
+    // Theme toggle with persistence
+    const themeToggle = document.getElementById('theme-toggle');
+
+    function setTheme(mode) {
+      if (!themeToggle) return;
+      if (mode === 'dark') {
+        document.documentElement.classList.add('dark');
+        localStorage.theme = 'dark';
+        themeToggle.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>';
+      } else {
+        document.documentElement.classList.remove('dark');
+        localStorage.theme = 'light';
+        themeToggle.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1M12 20v1M4.22 4.22l.71.71M18.36 18.36l.71.71M1 12h1M22 12h1M4.22 19.78l.71-.71M18.36 5.64l.71-.71M12 7a5 5 0 100 10 5 5 0 000-10z"/></svg>';
+      }
+    }
+
+    (function initTheme(){
+      const stored = localStorage.theme;
+      if (stored === 'dark' || (!stored && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        setTheme('dark');
+      } else {
+        setTheme('light');
+      }
+    })();
+
+    themeToggle?.addEventListener('click', () => {
+      const isDark = document.documentElement.classList.contains('dark');
+      setTheme(isDark ? 'light' : 'dark');
+    });
+  </script>
 </body>
 </html>
