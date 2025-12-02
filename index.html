@@ -22,12 +22,16 @@
       animation: gradientShift 14s ease infinite;
     }
     @keyframes gradientShift { 0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%} }
-    .glass {
-      backdrop-filter: blur(8px) saturate(120%);
-      background: rgba(255,255,255,0.55);
-      border: 1px solid rgba(255,255,255,0.4);
-      box-shadow: 0 12px 36px rgba(2,6,23,0.08);
-    }
+   .glass {
+  backdrop-filter: blur(18px) saturate(180%);
+  background: rgba(255,255,255,0.18);
+  border: 1px solid rgba(255,255,255,0.12);
+}
+html.dark .glass {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
     html.dark .glass {
       background: rgba(10,18,30,0.45);
       border: 1px solid rgba(255,255,255,0.05);
